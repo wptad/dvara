@@ -24,6 +24,8 @@ type ReplicaSetState struct {
 func NewReplicaSetState(addr string) (*ReplicaSetState, error) {
 	info := &mgo.DialInfo{
 		Addrs:   []string{addr},
+		Username: username,
+		Password: password,
 		Direct:  true,
 		Timeout: 5 * time.Second,
 	}
@@ -122,7 +124,7 @@ type ReplicaSetStateCreator struct {
 func (c *ReplicaSetStateCreator) FromAddrs(addrs []string, replicaSetName string) (*ReplicaSetState, error) {
 	var r *ReplicaSetState
 	for _, addr := range addrs {
-		ar, err := NewReplicaSetState(addr)
+		ar, err := NewReplicaSetState(username, password, addr)
 		if err != nil {
 			c.Log.Errorf("ignoring failure against address %s: %s", addr, err)
 			continue
