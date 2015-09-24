@@ -21,7 +21,7 @@ type ReplicaSetState struct {
 }
 
 // NewReplicaSetState creates a new ReplicaSetState using the given address.
-func NewReplicaSetState(addr string) (*ReplicaSetState, error) {
+func NewReplicaSetState(username, password, addr string) (*ReplicaSetState, error) {
 	info := &mgo.DialInfo{
 		Addrs:   []string{addr},
 		Username: username,
@@ -121,7 +121,7 @@ type ReplicaSetStateCreator struct {
 
 // FromAddrs creates a ReplicaSetState from the given set of see addresses. It
 // requires the addresses to be part of the same Replica Set.
-func (c *ReplicaSetStateCreator) FromAddrs(addrs []string, replicaSetName string) (*ReplicaSetState, error) {
+func (c *ReplicaSetStateCreator) FromAddrs(username, password string, addrs []string, replicaSetName string) (*ReplicaSetState, error) {
 	var r *ReplicaSetState
 	for _, addr := range addrs {
 		ar, err := NewReplicaSetState(username, password, addr)

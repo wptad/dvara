@@ -114,7 +114,7 @@ func (p *Proxy) stop(hard bool) error {
 
 func (p *Proxy) checkRSChanged() bool {
 	addrs := p.ReplicaSet.lastState.Addrs()
-	r, err := p.ReplicaSet.ReplicaSetStateCreator.FromAddrs(p.Username, p.Password, addrs)
+	r, err := p.ReplicaSet.ReplicaSetStateCreator.FromAddrs(p.Username, p.Password, addrs, p.ReplicaSet.Name)
 	if err != nil {
 		p.Log.Errorf("all nodes possibly down?: %s", err)
 		return true

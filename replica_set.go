@@ -137,7 +137,7 @@ func (r *ReplicaSet) Start() error {
 
 	rawAddrs := strings.Split(r.Addrs, ",")
 	var err error
-  r.lastState, err = r.ReplicaSetStateCreator.FromAddrs(r.Username, r.Password, rawAddrs)
+  r.lastState, err = r.ReplicaSetStateCreator.FromAddrs(r.Username, r.Password, rawAddrs, r.Name)
 	if err != nil {
 		return err
 	}
