@@ -8,11 +8,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/intercom/dvara"
 	"github.com/facebookgo/gangliamr"
 	"github.com/facebookgo/inject"
 	"github.com/facebookgo/startstop"
 	"github.com/facebookgo/stats"
+	"github.com/intercom/dvara"
 )
 
 func main() {
