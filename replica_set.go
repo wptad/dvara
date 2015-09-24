@@ -100,7 +100,7 @@ type ReplicaSet struct {
 	Username string
 
 	// Password is the password used to connect to the server for retrieving replica state.
-  Password string
+	Password string
 
 	ClientsConnected metrics.Counter
 
@@ -137,7 +137,7 @@ func (r *ReplicaSet) Start() error {
 
 	rawAddrs := strings.Split(r.Addrs, ",")
 	var err error
-  r.lastState, err = r.ReplicaSetStateCreator.FromAddrs(r.Username, r.Password, rawAddrs, r.Name)
+	r.lastState, err = r.ReplicaSetStateCreator.FromAddrs(r.Username, r.Password, rawAddrs, r.Name)
 	if err != nil {
 		return err
 	}

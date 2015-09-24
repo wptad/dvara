@@ -251,7 +251,7 @@ func TestSingleNodeNewReplicaSetState(t *testing.T) {
 	t.Parallel()
 	mgo := mgotest.NewStartedServer(t)
 	defer mgo.Stop()
-	rs, err := NewReplicaSetState("","",mgo.URL())
+	rs, err := NewReplicaSetState("", "", mgo.URL())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -264,7 +264,7 @@ func TestNewReplicaSetStateFailure(t *testing.T) {
 	t.Parallel()
 	mgo := mgotest.NewStartedServer(t)
 	mgo.Stop()
-	_, err := NewReplicaSetState("","",mgo.URL())
+	_, err := NewReplicaSetState("", "", mgo.URL())
 	const expected = "no reachable servers"
 	if err == nil || err.Error() != expected {
 		t.Fatalf("unexpected error: %s", err)
@@ -275,7 +275,7 @@ func TestSingleNodeNewReplicaSetStateAddrs(t *testing.T) {
 	t.Parallel()
 	mgo := mgotest.NewStartedServer(t)
 	defer mgo.Stop()
-	rs, err :=  NewReplicaSetState("","",mgo.URL())
+	rs, err := NewReplicaSetState("", "", mgo.URL())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -300,7 +300,7 @@ func TestIgnoreMismatchingReplicaSets(t *testing.T) {
 	urls := replicaSet.Addrs()
 	urls = append(urls, singleMongo.URL())
 
-	state, err := creator.FromAddrs("","",urls, "rs")
+	state, err := creator.FromAddrs("", "", urls, "rs")
 	if err != nil {
 		t.Fatalf("unexpected error: %s", err)
 	}
@@ -308,7 +308,7 @@ func TestIgnoreMismatchingReplicaSets(t *testing.T) {
 		t.Fatalf("unexpected replicaset: %s", state.lastRS.Name)
 	}
 
-	_, err = creator.FromAddrs("","",urls, "")
+	_, err = creator.FromAddrs("", "", urls, "")
 	if err == nil {
 		t.Fatalf("missing expected error: %s", err)
 	}

@@ -23,11 +23,11 @@ type ReplicaSetState struct {
 // NewReplicaSetState creates a new ReplicaSetState using the given address.
 func NewReplicaSetState(username, password, addr string) (*ReplicaSetState, error) {
 	info := &mgo.DialInfo{
-		Addrs:   []string{addr},
+		Addrs:    []string{addr},
 		Username: username,
 		Password: password,
-		Direct:  true,
-		Timeout: 5 * time.Second,
+		Direct:   true,
+		Timeout:  5 * time.Second,
 	}
 	session, err := mgo.DialWithInfo(info)
 	if err != nil {

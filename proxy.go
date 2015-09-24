@@ -30,8 +30,8 @@ type Proxy struct {
 	Log            Logger
 	ReplicaSet     *ReplicaSet
 	ClientListener net.Listener // Listener for incoming client connections
-	Username      string       // Mongo user, if mongo uses auth
-	Password  string       // Mongo password, if mongo uses auth
+	Username       string       // Mongo user, if mongo uses auth
+	Password       string       // Mongo password, if mongo uses auth
 	ProxyAddr      string       // Address for incoming client connections
 	MongoAddr      string       // Address for destination Mongo server
 
