@@ -96,6 +96,12 @@ type ReplicaSet struct {
 	// will be used
 	Name string
 
+	// Username is the username used to connect to the server for retrieving replica state.
+	Username string
+
+	// Password is the password used to connect to the server for retrieving replica state.
+	Password string
+
 	ClientsConnected metrics.Counter
 
 	proxyToReal map[string]string
@@ -131,7 +137,7 @@ func (r *ReplicaSet) Start() error {
 
 	rawAddrs := strings.Split(r.Addrs, ",")
 	var err error
-	r.lastState, err = r.ReplicaSetStateCreator.FromAddrs(rawAddrs, r.Name)
+	r.lastState, err = r.ReplicaSetStateCreator.FromAddrs(r.Username, r.Password, rawAddrs, r.Name)
 	if err != nil {
 		return err
 	}
@@ -161,6 +167,8 @@ func (r *ReplicaSet) Start() error {
 			ReplicaSet:     r,
 			ClientListener: listener,
 			ProxyAddr:      r.proxyAddr(listener),
+			Username:       r.Username,
+			Password:       r.Password,
 			MongoAddr:      addr,
 		}
 		if err := r.add(p); err != nil {

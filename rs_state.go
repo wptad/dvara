@@ -21,11 +21,13 @@ type ReplicaSetState struct {
 }
 
 // NewReplicaSetState creates a new ReplicaSetState using the given address.
-func NewReplicaSetState(addr string) (*ReplicaSetState, error) {
+func NewReplicaSetState(username, password, addr string) (*ReplicaSetState, error) {
 	info := &mgo.DialInfo{
-		Addrs:   []string{addr},
-		Direct:  true,
-		Timeout: 5 * time.Second,
+		Addrs:    []string{addr},
+		Username: username,
+		Password: password,
+		Direct:   true,
+		Timeout:  5 * time.Second,
 	}
 	session, err := mgo.DialWithInfo(info)
 	if err != nil {
@@ -119,10 +121,10 @@ type ReplicaSetStateCreator struct {
 
 // FromAddrs creates a ReplicaSetState from the given set of see addresses. It
 // requires the addresses to be part of the same Replica Set.
-func (c *ReplicaSetStateCreator) FromAddrs(addrs []string, replicaSetName string) (*ReplicaSetState, error) {
+func (c *ReplicaSetStateCreator) FromAddrs(username, password string, addrs []string, replicaSetName string) (*ReplicaSetState, error) {
 	var r *ReplicaSetState
 	for _, addr := range addrs {
-		ar, err := NewReplicaSetState(addr)
+		ar, err := NewReplicaSetState(username, password, addr)
 		if err != nil {
 			c.Log.Errorf("ignoring failure against address %s: %s", addr, err)
 			continue
