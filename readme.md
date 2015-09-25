@@ -5,11 +5,15 @@ dvara provides a connection pooling proxy for
 [MongoDB](http://www.mongodb.org/). For more information look at the associated
 blog post: http://blog.parse.com/2014/06/23/dvara/.
 
-To build from source you'll need [Go](http://golang.org/). With it you can install it using:
+To build from source you'll need [Go](http://golang.org/). Fetch code:
 
     go get github.com/intercom/dvara/cmd/dvara
 
-To start the app, after install it, run:
+Install the app
+
+   go install github.com/intercom/dvara/cmd/dvara
+
+Run the proxy, assuming the mongodb is already running
 
     dvara -addrs=$HOST:$PORT where host and port is location of mongo db instance
 
