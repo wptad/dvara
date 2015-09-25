@@ -11,7 +11,7 @@ To build from source you'll need [Go](http://golang.org/). Fetch code:
 
 Install the app
 
-   go install github.com/intercom/dvara/cmd/dvara
+    go install github.com/intercom/dvara/cmd/dvara
 
 Run the proxy, assuming the mongodb is already running
 
