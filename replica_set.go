@@ -60,6 +60,10 @@ type ReplicaSet struct {
 	PortStart int
 	PortEnd   int
 
+	// Where to listen for clients.
+	// "0.0.0.0" means public service, "127.0.0.1" means localhost only.
+	ListenAddr string
+
 	// Maximum number of connections that will be established to each mongo node.
 	MaxConnections uint
 
@@ -302,7 +306,7 @@ func (r *ReplicaSet) proxyHostname() string {
 
 func (r *ReplicaSet) newListener() (net.Listener, error) {
 	for i := r.PortStart; i <= r.PortEnd; i++ {
-		listener, err := net.Listen("tcp", fmt.Sprintf(":%d", i))
+		listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", r.ListenAddr, i))
 		if err == nil {
 			return listener, nil
 		}
