@@ -1,9 +1,6 @@
 {
 	"ImportPath": "github.com/intercom/dvara",
 	"GoVersion": "go1.5.1",
-	"Packages": [
-		"./..."
-	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/davecgh/go-spew/spew",
@@ -12,10 +9,6 @@
 		{
 			"ImportPath": "github.com/facebookgo/clock",
 			"Rev": "600d898af40aa09a7a93ecb9265d87b0504b6f03"
-		},
-		{
-			"ImportPath": "github.com/facebookgo/dvara",
-			"Rev": "ab87f8114947ea19a1208a7a897c74be3fb04c6b"
 		},
 		{
 			"ImportPath": "github.com/facebookgo/ensure",
