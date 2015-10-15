@@ -3,13 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/DataDog/datadog-go/statsd"
 	"github.com/facebookgo/gangliamr"
 	"github.com/facebookgo/inject"
 	"github.com/facebookgo/startstop"
@@ -37,9 +35,10 @@ func Main() error {
 	serverClosePoolSize := flag.Uint("server_close_pool_size", 1, "number of goroutines that will handle closing server connections.")
 	serverIdleTimeout := flag.Duration("server_idle_timeout", 60*time.Minute, "duration after which a server connection will be considered idle")
 	username := flag.String("username", "", "mongo db username")
+	metricsAddress := flag.String("--metrics", "127.0.0.1:8125", "UDP address to send metrics to datadog, default is 127.0.0.1:8125")
 
 	flag.Parse()
-	statsClient := NewDataDogStatsDClient()
+	statsClient := NewDataDogStatsDClient(*metricsAddress)
 
 	replicaSet := dvara.ReplicaSet{
 		Addrs:                   *addrs,
@@ -55,7 +54,6 @@ func Main() error {
 		ServerClosePoolSize:     *serverClosePoolSize,
 		ServerIdleTimeout:       *serverIdleTimeout,
 		Username:                *username,
-		//		Stats:                   *statsClient,
 	}
 
 	var log stdLogger
@@ -94,50 +92,4 @@ func Main() error {
 
 type registerMetrics interface {
 	RegisterMetrics(r *gangliamr.Registry)
-}
-
-func NewDataDogStatsDClient() DatadogStatsClient {
-	c, err := statsd.New("127.0.0.1:8125")
-	if err != nil {
-		log.Fatal(err)
-	}
-	return DatadogStatsClient{c}
-}
-
-type DatadogStatsClient struct {
-	client *statsd.Client
-}
-
-func (c DatadogStatsClient) BumpAvg(key string, val float64) {
-	// average can go up or down, so I gues gauge is best aproximate
-	c.client.Gauge(key, val, nil, 1)
-}
-
-func (c DatadogStatsClient) BumpHistogram(key string, val float64) {
-	c.client.Histogram(key, val, nil, 1)
-}
-
-func (c DatadogStatsClient) BumpSum(key string, val float64) {
-	// Sum can go only up, so I gues Count is best aproximate, I'm not
-	// sure how lossy is float to int conversion here
-	// code grep indicates that method is usually called with value of 1
-	c.client.Count(key, int64(val), nil, 1)
-}
-
-func (c DatadogStatsClient) BumpTime(key string) interface {
-	End()
-} {
-	return noOpEnd{c, key, time.Now()}
-}
-
-type noOpEnd struct {
-	dataDogStatsClient DatadogStatsClient
-	key                string
-	eventStartTime     time.Time
-}
-
-func (n noOpEnd) End() {
-	// Graphite default precision is millisecond I think, should switch later
-	// to millisecond I guess
-	n.dataDogStatsClient.client.Gauge(n.key, float64(time.Since(n.eventStartTime).Nanoseconds()), nil, 1)
 }
