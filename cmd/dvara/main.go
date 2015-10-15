@@ -40,6 +40,7 @@ func Main() error {
 	username := flag.String("username", "", "mongo db username")
 
 	flag.Parse()
+	statsClient := NewDataDogStatsDClient()
 
 	replicaSet := dvara.ReplicaSet{
 		Addrs:                   *addrs,
@@ -55,10 +56,9 @@ func Main() error {
 		ServerClosePoolSize:     *serverClosePoolSize,
 		ServerIdleTimeout:       *serverIdleTimeout,
 		Username:                *username,
+		//		Stats:                   *statsClient,
 	}
 
-	var statsClient stats.HookClient
-	statsClient := NewDataDogStatsDClient()
 	var log stdLogger
 	var graph inject.Graph
 	err := graph.Provide(
@@ -97,17 +97,29 @@ type registerMetrics interface {
 	RegisterMetrics(r *gangliamr.Registry)
 }
 
-func NewDataDogStatsDClient() *DatadogStatsClient {
+func NewDataDogStatsDClient() DatadogStatsClient {
 	c, err := statsd.New("127.0.0.1:8125")
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &DatadogStatsClient{c}
+	return DatadogStatsClient{c}
 }
 
 type DatadogStatsClient struct {
 	client *statsd.Client
 }
 
-func (c *DatadogStatsClient) BumpAvg(key string, val float64) {
+func (c DatadogStatsClient) BumpAvg(key string, val float64) {
+}
+
+func (c DatadogStatsClient) BumpHistogram(key string, val float64) {
+}
+
+func (c DatadogStatsClient) BumpSum(key string, val float64) {
+}
+
+func (c DatadogStatsClient) BumpTime(key string) interface {
+	End()
+} {
+	return stats.NoOpEnd
 }
