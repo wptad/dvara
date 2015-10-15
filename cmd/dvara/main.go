@@ -13,7 +13,6 @@ import (
 	"github.com/facebookgo/gangliamr"
 	"github.com/facebookgo/inject"
 	"github.com/facebookgo/startstop"
-	"github.com/facebookgo/stats"
 	"github.com/intercom/dvara"
 )
 
@@ -128,5 +127,17 @@ func (c DatadogStatsClient) BumpSum(key string, val float64) {
 func (c DatadogStatsClient) BumpTime(key string) interface {
 	End()
 } {
-	return stats.NoOpEnd
+	return noOpEnd{c, key, time.Now()}
+}
+
+type noOpEnd struct {
+	dataDogStatsClient DatadogStatsClient
+	key                string
+	eventStartTime     time.Time
+}
+
+func (n noOpEnd) End() {
+	// Graphite default precision is millisecond I think, should switch later
+	// to millisecond I guess
+	n.dataDogStatsClient.client.Gauge(n.key, float64(time.Since(n.eventStartTime).Nanoseconds()), nil, 1)
 }
