@@ -35,7 +35,7 @@ func Main() error {
 	serverClosePoolSize := flag.Uint("server_close_pool_size", 1, "number of goroutines that will handle closing server connections.")
 	serverIdleTimeout := flag.Duration("server_idle_timeout", 60*time.Minute, "duration after which a server connection will be considered idle")
 	username := flag.String("username", "", "mongo db username")
-	metricsAddress := flag.String("--metrics", "127.0.0.1:8125", "UDP address to send metrics to datadog, default is 127.0.0.1:8125")
+	metricsAddress := flag.String("metrics", "127.0.0.1:8125", "UDP address to send metrics to datadog, default is 127.0.0.1:8125")
 
 	flag.Parse()
 	statsClient := NewDataDogStatsDClient(*metricsAddress)
