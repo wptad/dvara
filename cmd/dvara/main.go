@@ -3,11 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/DataDog/datadog-go/statsd"
 	"github.com/facebookgo/gangliamr"
 	"github.com/facebookgo/inject"
 	"github.com/facebookgo/startstop"
@@ -56,6 +58,7 @@ func Main() error {
 	}
 
 	var statsClient stats.HookClient
+	statsClient := NewDataDogStatsDClient()
 	var log stdLogger
 	var graph inject.Graph
 	err := graph.Provide(
@@ -92,4 +95,19 @@ func Main() error {
 
 type registerMetrics interface {
 	RegisterMetrics(r *gangliamr.Registry)
+}
+
+func NewDataDogStatsDClient() *DatadogStatsClient {
+	c, err := statsd.New("127.0.0.1:8125")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return &DatadogStatsClient{c}
+}
+
+type DatadogStatsClient struct {
+	client *statsd.Client
+}
+
+func (c *DatadogStatsClient) BumpAvg(key string, val float64) {
 }
