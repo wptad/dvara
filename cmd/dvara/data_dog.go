@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/DataDog/datadog-go/statsd"
@@ -21,24 +22,24 @@ type DatadogStatsClient struct {
 
 func (c DatadogStatsClient) BumpAvg(key string, val float64) {
 	// average can go up or down, so I gues gauge is best aproximate
-	c.client.Gauge(key, val, nil, 1)
+	c.client.Gauge(sanitizeStatsKey(key), val, nil, 1)
 }
 
 func (c DatadogStatsClient) BumpHistogram(key string, val float64) {
-	c.client.Histogram(key, val, nil, 1)
+	c.client.Histogram(sanitizeStatsKey(key), val, nil, 1)
 }
 
 func (c DatadogStatsClient) BumpSum(key string, val float64) {
 	// Sum can go only up, so I gues Count is best aproximate, I'm not
 	// sure how lossy is float to int conversion here
 	// code grep indicates that method is usually called with value of 1
-	c.client.Count(key, int64(val), nil, 1)
+	c.client.Count(sanitizeStatsKey(key), int64(val), nil, 1)
 }
 
 func (c DatadogStatsClient) BumpTime(key string) interface {
 	End()
 } {
-	return timeEnd{c, key, time.Now()}
+	return timeEnd{c, sanitizeStatsKey(key), time.Now()}
 }
 
 type timeEnd struct {
@@ -50,5 +51,11 @@ type timeEnd struct {
 func (n timeEnd) End() {
 	// Graphite default precision is millisecond I think, should switch later
 	// to millisecond I guess
-	n.dataDogStatsClient.client.Gauge(n.key, float64(time.Since(n.eventStartTime).Nanoseconds()), nil, 1)
+	n.dataDogStatsClient.client.Gauge(sanitizeStatsKey(n.key), float64(time.Since(n.eventStartTime).Nanoseconds()), nil, 1)
+}
+
+func sanitizeStatsKey(statKey string) string {
+	// statsd format uses ":" as separator, so keys must not contain this param
+	// no particular reason to use underscore, just since it is easy to read
+	return strings.Replace(statKey, ":", "_", -1)
 }
