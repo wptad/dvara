@@ -137,6 +137,7 @@ func (p *Proxy) newServerConn() (io.Closer, error) {
 	for retryCount := 7; retryCount > 0; retryCount-- {
 		c, err := net.Dial("tcp", p.MongoAddr)
 		if err == nil {
+			AuthSocket(c, Credential{Username: p.Username, Password: p.Password, Source: "admin"})
 			return c, nil
 		}
 		p.Log.Error(err)

@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 var (
@@ -195,4 +197,47 @@ func setInt32(b []byte, pos int, i int32) {
 	b[pos+1] = byte(i >> 8)
 	b[pos+2] = byte(i >> 16)
 	b[pos+3] = byte(i >> 24)
+}
+
+var emptyHeader = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+
+func addHeader(b []byte, opcode int) []byte {
+	i := len(b)
+	b = append(b, emptyHeader...)
+	// Enough for current opcodes.
+	b[i+12] = byte(opcode)
+	b[i+13] = byte(opcode >> 8)
+	return b
+}
+
+func addInt32(b []byte, i int32) []byte {
+	return append(b, byte(i), byte(i>>8), byte(i>>16), byte(i>>24))
+}
+
+func addCString(b []byte, s string) []byte {
+	b = append(b, []byte(s)...)
+	b = append(b, 0)
+	return b
+}
+
+func addBSON(b []byte, doc interface{}) ([]byte, error) {
+	if doc == nil {
+		return append(b, 5, 0, 0, 0, 0), nil
+	}
+	data, err := bson.Marshal(doc)
+	if err != nil {
+		return b, err
+	}
+	return append(b, data...), nil
+}
+
+func getInt64(b []byte, pos int) int64 {
+	return (int64(b[pos+0])) |
+		(int64(b[pos+1]) << 8) |
+		(int64(b[pos+2]) << 16) |
+		(int64(b[pos+3]) << 24) |
+		(int64(b[pos+4]) << 32) |
+		(int64(b[pos+5]) << 40) |
+		(int64(b[pos+6]) << 48) |
+		(int64(b[pos+7]) << 56)
 }
