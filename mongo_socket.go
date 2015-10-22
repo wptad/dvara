@@ -31,13 +31,16 @@ type replyOp struct {
 	replyDocs int32
 }
 
-func AuthSocket(conn net.Conn, cred Credential) net.Conn {
+func AuthSocket(conn net.Conn, cred Credential) error {
 	socket := &mongoSocket{
 		conn: conn,
 	}
 	fmt.Printf("Socket %p to %s: initialized\n", socket, socket.addr)
-	socket.Login(cred)
-	return socket.conn
+	err := socket.Login(cred)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (socket *mongoSocket) kill(err error, abend bool) {
