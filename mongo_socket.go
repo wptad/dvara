@@ -58,6 +58,7 @@ type replyOp struct {
 }
 
 func (socket *mongoSocket) kill(err error, abend bool) {
+	fmt.Printf("WARN: Killing socket: %s, with error: %s, and abend:%s", socket, err, abend)
 	socket.conn.Close()
 }
 
