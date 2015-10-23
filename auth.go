@@ -130,6 +130,7 @@ func (socket *mongoSocket) Login(cred Credential) error {
 	key := hex.EncodeToString(ksum.Sum(nil))
 
 	cmd := authCmd{Authenticate: 1, User: cred.Username, Nonce: nonce, Key: key}
+	fmt.Printf("Trying to login with nonce:%s \n", nonce)
 	res := authResult{}
 	op := queryOp{}
 	op.query = &cmd
