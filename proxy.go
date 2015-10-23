@@ -129,6 +129,17 @@ func (p *Proxy) checkRSChanged() bool {
 	return false
 }
 
+func (p *Proxy) AuthConn(conn net.Conn) error {
+	socket := &mongoSocket{
+		conn: conn,
+	}
+	err := socket.Login(Credential{Username: p.Username, Password: p.Password, Source: "admin"})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Open up a new connection to the server. Retry 7 times, doubling the sleep
 // each time. This means we'll a total of 12.75 seconds with the last wait
 // being 6.4 seconds.
@@ -137,7 +148,13 @@ func (p *Proxy) newServerConn() (io.Closer, error) {
 	for retryCount := 7; retryCount > 0; retryCount-- {
 		c, err := net.Dial("tcp", p.MongoAddr)
 		if err == nil {
-			return c, nil
+			if len(p.Username) == 0 {
+				return c, nil
+			}
+			err = p.AuthConn(c)
+			if err == nil {
+				return c, nil
+			}
 		}
 		p.Log.Error(err)
 
