@@ -99,6 +99,8 @@ func (socket *mongoSocket) getNonce() (nonce string, err error) {
 			} else {
 				msg = "Got an empty nonce"
 			}
+			fmt.Printf(msg)
+			err = errors.New(msg)
 			socket.kill(errors.New(msg), true)
 			return
 		}
