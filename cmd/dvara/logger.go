@@ -6,6 +6,10 @@ import "log"
 // placeholder until we can open source our logger.
 type stdLogger struct{}
 
+func (l *stdLogger) SetPrefix(prefix string) {
+	log.SetPrefix(prefix)
+}
+
 func (l *stdLogger) Error(args ...interface{})                 { log.Printf("ERROR:%s", args...) }
 func (l *stdLogger) Errorf(format string, args ...interface{}) { log.Printf("ERROR:"+format, args...) }
 func (l *stdLogger) Warn(args ...interface{})                  { log.Printf("WARN:%s", args...) }

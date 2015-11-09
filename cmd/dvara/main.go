@@ -36,6 +36,7 @@ func Main() error {
 	serverIdleTimeout := flag.Duration("server_idle_timeout", 60*time.Minute, "duration after which a server connection will be considered idle")
 	username := flag.String("username", "", "mongo db username")
 	metricsAddress := flag.String("metrics", "127.0.0.1:8125", "UDP address to send metrics to datadog, default is 127.0.0.1:8125")
+	logPrefix := flag.String("log_prefix", "", "Log prefix, default is empty")
 
 	flag.Parse()
 	statsClient := NewDataDogStatsDClient(*metricsAddress)
@@ -57,6 +58,7 @@ func Main() error {
 	}
 
 	var log stdLogger
+	log.SetPrefix(*logPrefix)
 	var graph inject.Graph
 	err := graph.Provide(
 		&inject.Object{Value: &log},
