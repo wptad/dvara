@@ -57,8 +57,7 @@ func Main() error {
 		Username:                *username,
 	}
 
-	var log stdLogger
-	log.SetPrefix(*logPrefix)
+	log := stdLogger{*logPrefix}
 	var graph inject.Graph
 	err := graph.Provide(
 		&inject.Object{Value: &log},
