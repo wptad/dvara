@@ -36,9 +36,10 @@ func Main() error {
 	serverIdleTimeout := flag.Duration("server_idle_timeout", 60*time.Minute, "duration after which a server connection will be considered idle")
 	username := flag.String("username", "", "mongo db username")
 	metricsAddress := flag.String("metrics", "127.0.0.1:8125", "UDP address to send metrics to datadog, default is 127.0.0.1:8125")
+	replicaName := flag.String("replica_name", "", "Replica name, used in metrics and logging, default is empty")
 
 	flag.Parse()
-	statsClient := NewDataDogStatsDClient(*metricsAddress)
+	statsClient := NewDataDogStatsDClient(*metricsAddress, *replicaName)
 
 	replicaSet := dvara.ReplicaSet{
 		Addrs:                   *addrs,
@@ -56,7 +57,7 @@ func Main() error {
 		Username:                *username,
 	}
 
-	var log stdLogger
+	log := stdLogger{*replicaName}
 	var graph inject.Graph
 	err := graph.Provide(
 		&inject.Object{Value: &log},

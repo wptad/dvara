@@ -8,32 +8,33 @@ import (
 	"github.com/DataDog/datadog-go/statsd"
 )
 
-func NewDataDogStatsDClient(address string) DatadogStatsClient {
+func NewDataDogStatsDClient(address string, replica string) DatadogStatsClient {
 	c, err := statsd.New(address)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return DatadogStatsClient{c}
+	return DatadogStatsClient{c, replica}
 }
 
 type DatadogStatsClient struct {
-	client *statsd.Client
+	client      *statsd.Client
+	replicaName string
 }
 
 func (c DatadogStatsClient) BumpAvg(key string, val float64) {
 	// average can go up or down, so I gues gauge is best aproximate
-	c.client.Gauge(sanitizeStatsKey(key), val, nil, 1)
+	c.client.Gauge(sanitizeStatsKey(key), val, []string{c.replicaName}, 1)
 }
 
 func (c DatadogStatsClient) BumpHistogram(key string, val float64) {
-	c.client.Histogram(sanitizeStatsKey(key), val, nil, 1)
+	c.client.Histogram(sanitizeStatsKey(key), val, []string{c.replicaName}, 1)
 }
 
 func (c DatadogStatsClient) BumpSum(key string, val float64) {
 	// Sum can go only up, so I gues Count is best aproximate, I'm not
 	// sure how lossy is float to int conversion here
 	// code grep indicates that method is usually called with value of 1
-	c.client.Count(sanitizeStatsKey(key), int64(val), nil, 1)
+	c.client.Count(sanitizeStatsKey(key), int64(val), []string{c.replicaName}, 1)
 }
 
 func (c DatadogStatsClient) BumpTime(key string) interface {
@@ -51,7 +52,7 @@ type timeEnd struct {
 func (n timeEnd) End() {
 	// Graphite default precision is millisecond I think, should switch later
 	// to millisecond I guess
-	n.dataDogStatsClient.client.Gauge(sanitizeStatsKey(n.key), float64(time.Since(n.eventStartTime).Nanoseconds()), nil, 1)
+	n.dataDogStatsClient.client.Gauge(sanitizeStatsKey(n.key), float64(time.Since(n.eventStartTime).Nanoseconds()), []string{n.dataDogStatsClient.replicaName}, 1)
 }
 
 func sanitizeStatsKey(statKey string) string {
