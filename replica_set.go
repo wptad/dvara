@@ -216,6 +216,7 @@ func (r *ReplicaSet) Stop() error {
 }
 
 func (r *ReplicaSet) stop(hard bool) error {
+	r.Stats.BumpSum("replica.stop", 1)
 	var wg sync.WaitGroup
 	wg.Add(len(r.proxies))
 	errch := make(chan error, len(r.proxies))
@@ -242,6 +243,7 @@ func (r *ReplicaSet) stop(hard bool) error {
 func (r *ReplicaSet) Restart() {
 	r.restarter.Do(func() {
 		r.Log.Info("restart triggered")
+		r.Stats.BumpSum("replica.restart", 1)
 		if err := r.stop(*hardRestart); err != nil {
 			// We log and ignore this hoping for a successful start anyways.
 			r.Log.Errorf("stop failed for restart: %s", err)
