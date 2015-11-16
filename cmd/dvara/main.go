@@ -57,7 +57,8 @@ func Main() error {
 		Username:                *username,
 	}
 
-	log := stdLogger{*replicaName}
+	// Extra space in logger, as word boundary
+	log := stdLogger{*replicaName + " "}
 	var graph inject.Graph
 	err := graph.Provide(
 		&inject.Object{Value: &log},
