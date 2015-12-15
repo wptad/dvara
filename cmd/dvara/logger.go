@@ -6,6 +6,7 @@ import "log"
 // placeholder until we can open source our logger.
 type stdLogger struct {
 	LogPrefix string
+	verbose   bool
 }
 
 func (l *stdLogger) prepend(level string, format string) string {
@@ -24,7 +25,13 @@ func (l *stdLogger) Info(args ...interface{}) { log.Printf(l.prepend("INFO:", "%
 func (l *stdLogger) Infof(format string, args ...interface{}) {
 	log.Printf(l.prepend("INFO:", format), args...)
 }
-func (l *stdLogger) Debug(args ...interface{}) { log.Printf(l.prepend("DEBUG:", "%s"), args...) }
+func (l *stdLogger) Debug(args ...interface{}) {
+	if l.verbose {
+		log.Printf(l.prepend("DEBUG:", "%s"), args...)
+	}
+}
 func (l *stdLogger) Debugf(format string, args ...interface{}) {
-	log.Printf(l.prepend("DEBUG:", format), args...)
+	if l.verbose {
+		log.Printf(l.prepend("DEBUG:", format), args...)
+	}
 }
