@@ -1,7 +1,18 @@
 {
 	"ImportPath": "github.com/intercom/dvara",
 	"GoVersion": "go1.5.1",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
+		{
+			"ImportPath": "github.com/4eek/gofaker/lorem",
+			"Rev": "f7a28650006ee63289ecbe77ab71d4a4c792dff4"
+		},
+		{
+			"ImportPath": "github.com/DataDog/datadog-go/statsd",
+			"Rev": "b050cd8f4d7c394545fd7d966c8e2909ce89d552"
+		},
 		{
 			"ImportPath": "github.com/davecgh/go-spew/spew",
 			"Rev": "2df174808ee097f90d259e432cc04442cf60be21"
@@ -82,6 +93,15 @@
 			"ImportPath": "gopkg.in/mgo.v2",
 			"Comment": "r2015.06.03-3-g3569c88",
 			"Rev": "3569c88678d88179dcbd68d02ab081cbca3cd4d0"
+		},
+		{
+			"ImportPath": "gopkg.in/mgo.v2-unstable/bson",
+			"Comment": "r2014.10.12-121-ge57d4e9",
+			"Rev": "e57d4e990eb0f483a9fed52f01cf80674e94d769"
+		},
+		{
+			"ImportPath": "gopkg.in/tomb.v2",
+			"Rev": "14b3d72120e8d10ea6e6b7f87f7175734b1faab8"
 		}
 	]
 }
